@@ -1,0 +1,431 @@
+<!doctype html>
+<html>
+
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+	<meta http-equiv="Expires" content="0" />
+	<script>
+		document.write("<link type='text/css' href='demo.css?version=" + new Date().getTime() + "' rel='stylesheet' />");
+	</script>
+</head>
+
+<body>
+	<div class="left">
+		<div id="divPlugin" class="plugin"></div>
+		<fieldset class="ipparse">
+			<legend>設備IP解析</legend>
+			<table cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td class="tt">模式</td>
+					<td colspan="3">
+						<select id="devicemode" class="sel" onchange="changeIPMode(this.value);">
+							<option value="1">IPServer</option>
+							<option value="2">HiDDNS</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">伺服器地址</td>
+					<td><input id="serveraddress" type="text" class="txt" value="" /></td>
+					<td class="tt">Port號</td>
+					<td><input id="serverport" type="text" class="txt" value="80" /></td>
+				</tr>
+				<tr>
+					<td class="tt">設備標示</td>
+					<td><input id="deviceid" type="text" class="txt" value="" /></td>
+					<td class="tt">&nbsp;</td>
+					<td><input type="button" class="btn" value="擷取設備IP" onclick="clickGetDeviceIP();" /></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="login">
+			<legend>登入</legend>
+			<table cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td class="tt">IP地址</td>
+					<td><input id="loginip" type="text" class="txt" value="192.168.6.34" /></td>
+					<td class="tt">Port號</td>
+					<td><input id="port" type="text" class="txt" value="80" /></td>
+				</tr>
+				<tr>
+					<td class="tt">用戶名</td>
+					<td><input id="username" type="text" class="txt" value="admin" /></td>
+					<td class="tt">密碼</td>
+					<td><input id="password" type="password" class="txt" value="123456" /></td>
+				</tr>
+				<tr>
+					<td class="tt">設備端口</td>
+					<td colspan="2"><input id="deviceport" type="text" class="txt" value="80" />（可選參數）</td>
+					<td>
+						視窗分割數&nbsp;
+						<select class="sel2" onchange="changeWndNum(this.value);">
+							<option value="1">1x1</option>
+							<option value="2" selected>2x2</option>
+							<option value="3">3x3</option>
+							<option value="4">4x4</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<input type="button" class="btn" value="登入" onclick="clickLogin();" />
+						<input type="button" class="btn" value="登出" onclick="clickLogout();" />
+						<input type="button" class="btn2" value="取得基本資料" onclick="clickGetDeviceInfo();" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">已登入設備</td>
+					<td>
+						<select id="ip" class="sel" onchange="getChannelInfo();"></select>
+					</td>
+					<td class="tt">通道列表</td>
+					<td>
+						<select id="channels" class="sel"></select>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="ipchannel">
+			<legend>數位通道</legend>
+			<table width="100%" cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td><input type="button" class="btn" value="擷取數位通道列表" onclick="clickGetDigitalChannelInfo();" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="digitaltdiv">
+							<table id="digitalchannellist" class="digitalchannellist" cellpadding="0" cellspacing="0"
+								border="0"></table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="localconfig">
+			<legend>本機配置</legend>
+			<table cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td class="tt">播放效能</td>
+					<td>
+						<select id="netsPreach" name="netsPreach" class="sel">
+							<option value="0">最短延遲</option>
+							<option value="1">最佳畫面</option>
+							<option value="2">均衡</option>
+							<option value="3">流暢度好</option>
+						</select>
+					</td>
+					<td class="tt">圖片尺寸</td>
+					<td>
+						<select id="wndSize" name="wndSize" class="sel">
+							<option value="0">全滿</option>
+							<option value="1">4:3</option>
+							<option value="2">16:9</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">規則資料</td>
+					<td>
+						<select id="rulesInfo" name="rulesInfo" class="sel">
+							<option value="1">啟用</option>
+							<option value="0">禁用</option>
+						</select>
+					</td>
+					<td class="tt">抓圖文件格式</td>
+					<td>
+						<select id="captureFileFormat" name="captureFileFormat" class="sel">
+							<option value="0">JPEG</option>
+							<option value="1">BMP</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">影像文件下載大小</td>
+					<td>
+						<select id="packSize" name="packSize" class="sel">
+							<option value="0">256M</option>
+							<option value="1">512M</option>
+							<option value="2">1G</option>
+						</select>
+					</td>
+					<td class="tt">協議類型</td>
+					<td>
+						<select id="protocolType" name="protocolType" class="sel">
+							<option value="0">TCP</option>
+							<option value="2">UDP</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">影像文件保存路徑</td>
+					<td colspan="3"><input id="recordPath" type="text" class="txt" />&nbsp;<input type="button"
+							class="btn" value="瀏覽" onclick="clickOpenFileDlg('recordPath', 0);" /></td>
+				</tr>
+				<tr>
+					<td class="tt">回放下載保存路徑</td>
+					<td colspan="3"><input id="downloadPath" type="text" class="txt" />&nbsp;<input type="button"
+							class="btn" value="瀏覽" onclick="clickOpenFileDlg('downloadPath', 0);" /></td>
+				</tr>
+				<tr>
+					<td class="tt">預覽抓圖保存路徑</td>
+					<td colspan="3"><input id="previewPicPath" type="text" class="txt" />&nbsp;<input type="button"
+							class="btn" value="瀏覽" onclick="clickOpenFileDlg('previewPicPath', 0);" /></td>
+				</tr>
+				<tr>
+					<td class="tt">回放抓圖保存路徑</td>
+					<td colspan="3"><input id="playbackPicPath" type="text" class="txt" />&nbsp;<input type="button"
+							class="btn" value="瀏覽" onclick="clickOpenFileDlg('playbackPicPath', 0);" /></td>
+				</tr>
+				<tr>
+					<td class="tt">回放剪輯保存路徑</td>
+					<td colspan="3"><input id="playbackFilePath" type="text" class="txt" />&nbsp;<input type="button"
+							class="btn" value="浏览" onclick="clickOpenFileDlg('playbackFilePath', 0);" /></td>
+				</tr>
+				<tr>
+					<td colspan="4"><input type="button" class="btn" value="擷取"
+							onclick="clickGetLocalCfg();" />&nbsp;<input type="button" class="btn" value="設置"
+							onclick="clickSetLocalCfg();" /></td>
+				</tr>
+			</table>
+		</fieldset>
+	</div>
+	<div class="left">
+		<fieldset class="preview">
+			<legend>預覽</legend>
+			<table cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td class="tt">碼流類型</td>
+					<td>
+						<select id="streamtype" class="sel">
+							<option value="1">主碼流</option>
+							<option value="2">子碼流</option>
+							<option value="3">第三碼流</option>
+							<option value="4">轉碼碼流</option>
+						</select>
+					</td>
+					<td>
+						<input type="button" class="btn" value="開始預覽" onclick="clickStartRealPlay();" />
+						<input type="button" class="btn" value="停止預覽" onclick="clickStopRealPlay();" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">音量</td>
+					<td>
+						<input type="text" id="volume" class="txt" value="50" maxlength="3" />&nbsp;<input type="button"
+							class="btn" value="設置" onclick="clickSetVolume();" />（範圍：0~100）
+					</td>
+					<td>
+						<input type="button" class="btn" value="打開聲音" onclick="clickOpenSound();" />
+						<input type="button" class="btn" value="關閉聲音" onclick="clickCloseSound();" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">對講通道</td>
+					<td>
+						<select id="audiochannels" class="sel">
+
+						</select>
+						<input type="button" class="btn" value="擷取通道" onclick="clickGetAudioInfo();" />
+					</td>
+					<td>
+						<input type="button" class="btn" value="開始對講" onclick="clickStartVoiceTalk();" />
+						<input type="button" class="btn" value="停止對獎" onclick="clickStopVoiceTalk();" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="button" class="btn" value="抓圖" onclick="clickCapturePic();" />
+						<input type="button" class="btn" value="開始錄影" onclick="clickStartRecord();" />
+						<input type="button" class="btn" value="停止錄影" onclick="clickStopRecord();" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<input type="button" class="btn2" value="啟用電子放大" onclick="clickEnableEZoom();" />
+						<input type="button" class="btn2" value="禁用電子放大" onclick="clickDisableEZoom();" />
+						<input type="button" class="btn2" value="啟用3D放大" onclick="clickEnable3DZoom();" />
+						<input type="button" class="btn2" value="禁用3D放大" onclick="clickDisable3DZoom();" />
+						<input type="button" class="btn" value="全螢幕" onclick="clickFullScreen();" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="ptz">
+			<legend>雲台控制</legend>
+			<table cellpadding="0" cellspacing="3" border="0" class="left">
+				<tr>
+					<td>
+						<input type="button" class="btn" value="左上" onmousedown="mouseDownPTZControl(5);"
+							onmouseup="mouseUpPTZControl();" />
+						<input type="button" class="btn" value="上" onmousedown="mouseDownPTZControl(1);"
+							onmouseup="mouseUpPTZControl();" />
+						<input type="button" class="btn" value="右上" onmousedown="mouseDownPTZControl(7);"
+							onmouseup="mouseUpPTZControl();" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button" class="btn" value="左" onmousedown="mouseDownPTZControl(3);"
+							onmouseup="mouseUpPTZControl();" />
+						<input type="button" class="btn" value="自動" onclick="mouseDownPTZControl(9);" />
+						<input type="button" class="btn" value="右" onmousedown="mouseDownPTZControl(4);"
+							onmouseup="mouseUpPTZControl();" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button" class="btn" value="左下" onmousedown="mouseDownPTZControl(6);"
+							onmouseup="mouseUpPTZControl();" />
+						<input type="button" class="btn" value="下" onmousedown="mouseDownPTZControl(2);"
+							onmouseup="mouseUpPTZControl();" />
+						<input type="button" class="btn" value="右下" onmousedown="mouseDownPTZControl(8);"
+							onmouseup="mouseUpPTZControl();" />
+					</td>
+				</tr>
+			</table>
+			<table cellpadding="0" cellspacing="3" border="0" class="left">
+				<tr>
+					<td class="tt">雲台速度</td>
+					<td>
+						<select id="ptzspeed" class="sel">
+							<option>1</option>
+							<option>2</option>
+							<option>3</option>
+							<option selected>4</option>
+							<option>5</option>
+							<option>6</option>
+							<option>7</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">預設點號</td>
+					<td><input id="preset" type="text" class="txt" value="1" /></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="button" class="btn" value="設置" onclick="clickSetPreset();" />
+						<input type="button" class="btn" value="調用" onclick="clickGoPreset();" />
+					</td>
+				</tr>
+			</table>
+			<table cellpadding="0" cellspacing="3" border="0" class="left">
+				<tr>
+					<td class="tt"><input type="button" class="btn2" value="變倍+" onmousedown="PTZZoomIn()"
+							onmouseup="PTZZoomStop()"></td>
+					<td><input type="button" class="btn2" value="變倍-" onmousedown="PTZZoomout()"
+							onmouseup="PTZZoomStop()"></td>
+				</tr>
+				<tr>
+					<td class="tt"><input type="button" class="btn2" value="變焦+" onmousedown="PTZFocusIn()"
+							onmouseup="PTZFoucusStop()"></td>
+					<td><input type="button" class="btn2" value="變焦-" onmousedown="PTZFoucusOut()"
+							onmouseup="PTZFoucusStop()"></td>
+				</tr>
+				<tr>
+					<td class="tt"><input type="button" class="btn2" value="光圈+" onmousedown="PTZIrisIn()"
+							onmouseup="PTZIrisStop()"></td>
+					<td><input type="button" class="btn2" value="光圈-" onmousedown="PTZIrisOut()"
+							onmouseup="PTZIrisStop()"></td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="playback">
+			<legend>回放</legend>
+			<table width="100%" cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td class="tt">開始時間</td>
+					<td>
+						<input id="starttime" type="text" class="txt" value="2013-12-10 00:00:00" />（時間格式：2022-01-01
+						12:34:56）
+					</td>
+				</tr>
+				<tr>
+					<td class="tt">結束時間</td>
+					<td>
+						<input id="endtime" type="text" class="txt" value="2013-12-11 23:59:59" />
+						<input type="button" class="btn" value="搜尋" onclick="clickRecordSearch(0);" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div class="searchdiv">
+							<table id="searchlist" class="searchlist" cellpadding="0" cellspacing="0" border="0">
+							</table>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="button" class="btn2" value="開始回放" onclick="clickStartPlayback();" />
+						<input type="button" class="btn2" value="停止回放" onclick="clickStopPlayback();" />
+						<input type="button" class="btn" value="倒放" onclick="clickReversePlayback();" />
+						<input type="button" class="btn" value="單幀" onclick="clickFrame();" />
+						<input id="transstream" type="checkbox" class="vtop" />&nbsp;啟用轉碼碼流
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="button" class="btn" value="暫停" onclick="clickPause();" />
+						<input type="button" class="btn" value="恢復" onclick="clickResume();" />
+						<input type="button" class="btn" value="慢放" onclick="clickPlaySlow();" />
+						<input type="button" class="btn" value="快放" onclick="clickPlayFast();" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="button" class="btn" value="抓圖" onclick="clickCapturePic();" />
+						<input type="button" class="btn2" value="開始剪輯" onclick="clickStartRecord();" />
+						<input type="button" class="btn2" value="停止剪輯" onclick="clickStopRecord();" />
+						<input type="button" class="btn2" value="OSD時間" onclick="clickGetOSDTime();" />&nbsp;<input
+							id="osdtime" type="text" class="txt" readonly />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="maintain">
+			<legend>系統維護</legend>
+			<table width="100%" cellpadding="0" cellspacing="3" border="0">
+				<tr>
+					<td>
+						<input type="button" class="btn2" value="匯出配置文件" onclick="clickExportDeviceConfig();" />
+						<input type="button" class="btn2" value="檢查程式版本" onclick="clickCheckPluginVersion();" />
+						<input type="button" class="btn2" value="遠端配置庫" onclick="clickRemoteConfig();" />
+						<input type="button" class="btn2" value="恢復原廠參數" onclick="clickRestoreDefault();" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input id="configFile" type="text" class="txt" />&nbsp;<input type="button" class="btn"
+							value="瀏覽" onclick="clickOpenFileDlg('configFile', 1);" />&nbsp;<input type="button"
+							class="btn2" value="匯入配置文件" onclick="clickImportDeviceConfig();" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input id="upgradeFile" type="text" class="txt" />&nbsp;<input type="button" class="btn"
+							value="瀏覽" onclick="clickOpenFileDlg('upgradeFile', 1);" />&nbsp;<input type="button"
+							class="btn2" value="升級" onclick="clickStartUpgrade();" />
+					</td>
+				</tr>
+			</table>
+		</fieldset>
+		<fieldset class="operate">
+			<legend>操作資料</legend>
+			<div id="opinfo" class="opinfo"></div>
+		</fieldset>
+		<fieldset class="callback">
+			<legend>事件回放信息</legend>
+			<div id="cbinfo" class="cbinfo"></div>
+		</fieldset>
+	</div>
+</body>
+<script src="jquery-1.7.1.min.js"></script>
+<script src="../codebase/webVideoCtrl.js"></script>
+<script src="demo.js"></script>
+
+</html>
